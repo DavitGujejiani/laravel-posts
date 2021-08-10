@@ -22,7 +22,9 @@ class PagesController extends Controller
             ], 400);
         }
 
-        return view('/posts', ['posts' => $response->body()]);
+        $posts = json_decode($response->body());
+        
+        return view('/posts', compact('posts'));
     }
 
     /**
@@ -51,6 +53,10 @@ class PagesController extends Controller
                 'message' => 'Post not found',
             ], 404);
         }
+
+        $post = json_decode($response->body());
+
+        return view('/post', compact('post'));
     }
 
     /**
