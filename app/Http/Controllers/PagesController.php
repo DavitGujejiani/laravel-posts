@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class PagesController extends Controller
 {
@@ -13,7 +14,15 @@ class PagesController extends Controller
      */
     public function index()
     {
-        //
+        $response = Http::get('https://jsonplaceholder.typicode.com/posts');
+
+        if (!$response->ok()) {
+            return response()->json([
+                'message' => 'Bad request',
+            ], 400);
+        }
+
+        return $response->body();
     }
 
     /**
@@ -35,7 +44,15 @@ class PagesController extends Controller
      */
     public function show($id)
     {
-        //
+        $response = Http::get("https://jsonplaceholder.typicode.com/posts/{$id}");
+
+        if (!$response->ok()) {
+            return response()->json([
+                'message' => 'Post not found',
+            ], 404);
+        }
+
+        return $response->body();
     }
 
     /**
