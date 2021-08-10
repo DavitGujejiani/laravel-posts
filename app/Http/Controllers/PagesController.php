@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\VarDumper\VarDumper;
 
 class PagesController extends Controller
 {
@@ -14,16 +15,18 @@ class PagesController extends Controller
      */
     public function index()
     {
-        $response = Http::get('https://jsonplaceholder.typicode.com/posts');
+        $posts = cache()->remember('posts', 300, function () {
+            $response = Http::get('https://jsonplaceholder.typicode.com/posts');
 
-        if (!$response->ok()) {
-            return response()->json([
-                'message' => 'Bad request',
-            ], 400);
-        }
+            if (!$response->ok()) {
+                return response()->json([
+                    'message' => 'Bad request',
+                ], 400);
+            }
 
-        $posts = json_decode($response->body());
-        
+            return json_decode($response->body());
+        });
+
         return view('/posts', compact('posts'));
     }
 
@@ -46,15 +49,17 @@ class PagesController extends Controller
      */
     public function show($id)
     {
-        $response = Http::get("https://jsonplaceholder.typicode.com/posts/{$id}");
+        $post = cache()->remember("posts{$id}", 300, function () use ($id) {
+            $response = Http::get("https://jsonplaceholder.typicode.com/posts/{$id}");
 
-        if (!$response->ok()) {
-            return response()->json([
-                'message' => 'Post not found',
-            ], 404);
-        }
+            if (!$response->ok()) {
+                return response()->json([
+                    'message' => 'Post not found',
+                ], 404);
+            }
 
-        $post = json_decode($response->body());
+            return json_decode($response->body());
+        });
 
         return view('/post', compact('post'));
     }
