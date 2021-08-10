@@ -22,7 +22,7 @@ class PagesController extends Controller
             ], 400);
         }
 
-        return $response->body();
+        return view('/posts', ['posts' => $response->body()]);
     }
 
     /**
@@ -51,8 +51,6 @@ class PagesController extends Controller
                 'message' => 'Post not found',
             ], 404);
         }
-
-        return $response->body();
     }
 
     /**

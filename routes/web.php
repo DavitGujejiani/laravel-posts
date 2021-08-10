@@ -14,4 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::resource('posts', PagesController::class)->only(['index', 'show']);
+Route::get('/', [PagesController::class, 'index'])->name('posts.index');
+Route::get('/posts/{id}', [PagesController::class, 'show'])->name('posts.show');
