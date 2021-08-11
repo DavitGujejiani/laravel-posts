@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Error;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use App\Services\RequestService;
 
 class PagesController extends Controller
 {
@@ -15,10 +16,7 @@ class PagesController extends Controller
      */
     public function index(): object
     {
-        $posts = cache()->remember('posts', 300, function () {
-            return Http::get('https://jsonplaceholder.typicode.com/posts')->object();
-        });
-
+        $posts = RequestService::cachedGetRequest('https://jsonplaceholder.typicode.com/posts');
         return view('/posts', compact('posts'));
     }
 
@@ -30,16 +28,7 @@ class PagesController extends Controller
      */
     public function show(int $id): object
     {
-        $post = Cache::remember('posts' . $id, 300, function () use ($id) {
-            $response = Http::get('https://jsonplaceholder.typicode.com/posts/' . $id);
-
-            if ($response->failed()) {
-                abort(404);
-            }
-
-            return $response->object();
-        });
-
+        $post = RequestService::cachedGetRequest('https://jsonplaceholder.typicode.com/posts/' . $id, $id);
         return view('/post', compact('post'));
     }
 }
