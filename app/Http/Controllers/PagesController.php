@@ -2,33 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use Error;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use App\Services\RequestService;
+use Exception;
 
 class PagesController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
+     * @param RequestService $service
      * @return object
      */
-    public function index(): object
+    public function index(RequestService $service): object
     {
-        $posts = RequestService::cachedGetRequest('https://jsonplaceholder.typicode.com/posts');
+        $posts = $service->cachedGetRequest('https://jsonplaceholder.typicode.com/posts');
+
         return view('/posts', compact('posts'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return object
      */
     public function show(int $id): object
     {
-        $post = RequestService::cachedGetRequest('https://jsonplaceholder.typicode.com/posts/' . $id, $id);
+        try {
+            $post = RequestService::cachedGetRequest('https://jsonplaceholder.typicode.com/posts/', $id);
+        } catch (Exception $ex) {
+            abort($ex->getMessage());
+        }
+
         return view('/post', compact('post'));
     }
 }
