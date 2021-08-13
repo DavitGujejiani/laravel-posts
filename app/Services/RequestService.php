@@ -15,7 +15,7 @@ class RequestService
      * @param ?int $id
      * @return object
      */
-    public static function cachedGetRequest(string $url, ?int $id = null): object
+    public function cachedGetRequest(string $url, ?int $id = null): object
     {
         return Cache::remember('posts' . $id, 1, function () use ($url, $id) {
             $response = Http::get($url . $id);

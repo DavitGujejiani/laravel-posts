@@ -23,13 +23,14 @@ class PagesController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param RequestService $service
      * @param int $id
      * @return object
      */
-    public function show(int $id): object
+    public function show(RequestService $service, int $id): object
     {
         try {
-            $post = RequestService::cachedGetRequest('https://jsonplaceholder.typicode.com/posts/', $id);
+            $post = $service->cachedGetRequest('https://jsonplaceholder.typicode.com/posts/', $id);
         } catch (Exception $ex) {
             abort($ex->getMessage());
         }
