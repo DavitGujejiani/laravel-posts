@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\RequestService;
+use App\Repositories\Posts\PostsRepositoryInterface;
 use Exception;
 
 class PagesController extends Controller
@@ -10,12 +10,16 @@ class PagesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param RequestService $service
+     * @param PostsRepositoryInterface $postsRepo
      * @return object
      */
-    public function index(RequestService $service): object
+    public function index(PostsRepositoryInterface $postsRepo): object
     {
-        $posts = $service->cachedGetRequest('https://jsonplaceholder.typicode.com/posts');
+        try {
+            $posts = $postsRepo->get('https://jsonplaceholder.typicode.com/posts');
+        } catch (Exception $exception) {
+            abort($exception->getMessage());
+        }
 
         return view('/posts', compact('posts'));
     }
@@ -23,16 +27,16 @@ class PagesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param RequestService $service
+     * @param PostsRepositoryInterface $postsRepo
      * @param int $id
      * @return object
      */
-    public function show(RequestService $service, int $id): object
+    public function show(PostsRepositoryInterface $postsRepo, int $id): object
     {
         try {
-            $post = $service->cachedGetRequest('https://jsonplaceholder.typicode.com/posts/', $id);
-        } catch (Exception $ex) {
-            abort($ex->getMessage());
+            $post = $postsRepo->find('https://jsonplaceholder.typicode.com/posts/', $id);
+        } catch (Exception $exception) {
+            abort($exception->getMessage());
         }
 
         return view('/post', compact('post'));
