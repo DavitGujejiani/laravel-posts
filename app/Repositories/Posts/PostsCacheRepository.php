@@ -8,7 +8,7 @@ class PostsCacheRepository implements PostsRepositoryInterface
 {
     protected $repo;
     protected $cache;
-    const TTL = 5;
+    const TTL = 300;
 
     /**
      * @param CacheManager $cache
