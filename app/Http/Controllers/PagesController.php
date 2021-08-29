@@ -4,16 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Repositories\Posts\PostsRepositoryInterface;
 use Exception;
+use Illuminate\View\View;
 
 class PagesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @param PostsRepositoryInterface $postsRepo
-     * @return object
-     */
-    public function index(PostsRepositoryInterface $postsRepo): object
+    public function index(PostsRepositoryInterface $postsRepo): View
     {
         try {
             $posts = $postsRepo->get('https://jsonplaceholder.typicode.com/posts');
@@ -24,14 +19,7 @@ class PagesController extends Controller
         return view('/posts', compact('posts'));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param PostsRepositoryInterface $postsRepo
-     * @param int $id
-     * @return object
-     */
-    public function show(PostsRepositoryInterface $postsRepo, int $id): object
+    public function show(PostsRepositoryInterface $postsRepo, int $id): View
     {
         try {
             $post = $postsRepo->find('https://jsonplaceholder.typicode.com/posts/', $id);
